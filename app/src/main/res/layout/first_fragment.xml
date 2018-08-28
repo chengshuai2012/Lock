@@ -1,26 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/index_bg">
-    <include layout="@layout/lock_head_main"/>
+    android:background="@drawable/main_bg"
+    android:orientation="vertical">
+    <include layout="@layout/lock_head_main" />
     <LinearLayout
-        android:background="@drawable/main_bg"
         android:id="@+id/layout_one"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="150px"
         android:orientation="vertical"
         android:visibility="visible">
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:id="@+id/main_button"
-                >
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="120px"
@@ -77,8 +68,6 @@
                 android:textSize="40sp" />
         </LinearLayout>
 
-
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -115,7 +104,7 @@
                     android:textSize="40dp"
                     android:text="@string/put_in"
                     />
-            </LinearLayout>
+</LinearLayout>
             <LinearLayout
                 android:id="@+id/main_bt_02"
                 android:layout_width="wrap_content"
@@ -145,7 +134,7 @@
                     android:textSize="40dp"
                     android:text="@string/temp"
                     />
-            </LinearLayout>
+        </LinearLayout>
             <LinearLayout
                 android:id="@+id/main_bt_03"
                 android:layout_width="wrap_content"
@@ -179,118 +168,6 @@
             </LinearLayout>
         </LinearLayout>
 
-        </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:visibility="gone"
-                android:id="@+id/work_identify"
-                >
-
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    >
-                    <TextView
-                        android:id="@+id/time_forfinger"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="30"
-                        android:textColor="@color/colorbutton"
-                        android:textStyle="bold"
-                        android:layout_marginLeft="30dp"
-                        android:layout_alignParentLeft="true"
-                        android:textSize="45sp"/>
-                </RelativeLayout>
-                <LinearLayout
-                    android:id="@+id/layout_three"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:visibility="visible"
-                    android:orientation="vertical">
-                    <LinearLayout
-                        android:layout_width="700px"
-                        android:layout_height="300px"
-                        android:visibility="visible"
-                        android:layout_gravity="center"
-                        android:orientation="vertical">
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/putfinger"
-                            android:id="@+id/imageView" />
-                    </LinearLayout>
-                    <LinearLayout
-                        android:id="@+id/layout_error_text"
-                        android:layout_width="600px"
-                        android:layout_height="180px"
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        android:visibility="visible"
-                        android:background="@drawable/main_botton"
-                        android:orientation="vertical">
-                        <TextView
-                            android:id="@+id/text_error"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/put_finger_right"
-                            android:gravity="center"
-                            android:textStyle="bold"
-                            android:textColor="@color/white"
-                            android:textSize="30px"
-                            />
-                        <EditText
-                            android:id="@+id/qrcode"
-                            android:layout_width="1dp"
-                            android:layout_height="1dp" />
-                    </LinearLayout>
-                </LinearLayout>
-                <LinearLayout
-                    android:id="@+id/open_lock_layout"
-                    android:layout_marginTop="100px"
-                    android:layout_width="700px"
-                    android:layout_height="500px"
-                    android:layout_gravity="center"
-                    android:background="@drawable/button_bt_bg"
-                    android:orientation="vertical"
-                    android:visibility="gone">
-                    <TextView
-                        android:id="@+id/text_start"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textSize="35sp"
-                        android:layout_gravity="center_horizontal"
-                        android:gravity="center"
-                        android:textStyle="bold"
-                        android:textColor="@color/white"
-                        android:text="@string/cabinet_number"/>
-                    <TextView
-                        android:id="@+id/text_number"
-                        android:layout_width="match_parent"
-                        android:layout_height="0px"
-                        android:layout_weight="1"
-                        android:textStyle="bold"
-                        android:textColor="@color/colorbutton"
-                        android:text=""
-                        android:textSize="80sp"
-                        android:layout_gravity="center"
-                        android:gravity="center"/>
-                    <TextView
-                        android:id="@+id/text_end"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="35sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/white"
-                        android:layout_gravity="center"
-                        android:lines="2"
-                        android:maxWidth="300sp"
-                        android:text="@string/cabinet_put_out"/>
-                </LinearLayout>
-            </LinearLayout>
-            </RelativeLayout>
     </LinearLayout>
 
     <LinearLayout
@@ -417,27 +294,27 @@
             android:layout_width="match_parent"
             android:layout_height="3dp"
             android:textColor="@color/white"></View>
-        <LinearLayout
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:text="@string/test"
-                android:textColor="@color/white"
-                android:textSize="@dimen/text_size_40sp" />
-            <Button
-                android:id="@+id/back_home"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_marginLeft="20dp"
-                android:text="@string/back_home"
-                android:textSize="@dimen/text_size_30sp" />
+            android:layout_marginTop="20dp"
+            android:text="@string/test"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_40sp" />
+        <Button
+            android:id="@+id/back_home"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="20dp"
+            android:text="@string/back_home"
+            android:textSize="@dimen/text_size_30sp" />
 
-        </LinearLayout>
+    </LinearLayout>
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -537,6 +414,5 @@
             android:textColor="@color/white"
             android:textSize="@dimen/text_size_30sp" />
     </RelativeLayout>
-
 
 </LinearLayout>

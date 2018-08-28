@@ -1,14 +1,17 @@
 apply plugin: 'com.android.application'
-
+apply plugin: 'com.jakewharton.butterknife'
 android {
     compileSdkVersion 26
     defaultConfig {
-        applicationId "cloud.link.com"
+        applicationId "com.link.cloud"
         minSdkVersion 25
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        ndk {
+            abiFilters  "armeabi-v7a"
+        }
     }
     buildTypes {
         release {
@@ -23,6 +26,8 @@ configurations.all {
 }
 apply plugin: 'realm-android'
 dependencies {
+    compile 'com.jakewharton:butterknife:8.4.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
