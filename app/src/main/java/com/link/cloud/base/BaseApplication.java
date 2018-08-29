@@ -23,10 +23,15 @@ package com.link.cloud.base;/*
  */
 
 
-
 import android.app.Application;
+import android.content.Intent;
+import android.os.Handler;
+import android.os.Message;
 
 import com.tencent.bugly.crashreport.CrashReport;
+
+import java.util.Calendar;
+import java.util.TimeZone;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -37,7 +42,8 @@ import io.realm.RealmConfiguration;
  * Created by Shaozy on 2016/8/10.
  */
 public class BaseApplication extends Application {
-
+    public static final String ACTION_UPDATEUI = "com.link.cloud.updateTiemStr";
+    public static final String ACTION_UPDATE = "com.link.cloud.updateTiemData";
     @Override
     public void onCreate() {
         super.onCreate();
@@ -49,8 +55,85 @@ public class BaseApplication extends Application {
         Realm.setDefaultConfiguration(configuration);
        // ifspeaking();
         CrashReport.initCrashReport(getApplicationContext(), "62ab7bf668", true);
+        mHandler.sendEmptyMessage(1);
 
     }
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case 1:
+                    mHandler.removeMessages(1);
+                    final Intent intent = new Intent();
+                    intent.setAction(ACTION_UPDATEUI);
+                    intent.putExtra("timeStr",getTime());
+                    intent.setAction(ACTION_UPDATE);
+                    intent.putExtra("timeData",getData());
+                    sendBroadcast(intent);
+                    mHandler.sendEmptyMessageDelayed(1,1000);
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+    public String getData(){
+        String timeStr=null;
+        String mMonth=null;
+        String mDay=null;
+        final Calendar c = Calendar.getInstance();
+        c.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
+        String mYear = String.valueOf(c.get(Calendar.YEAR)); // 获取当前年份
+        if ((c.get(Calendar.MONTH) + 1)<10){
+            mMonth = "0"+String.valueOf(c.get(Calendar.MONTH) + 1);// 获取当前月份
+        }else {
+            mMonth = String.valueOf(c.get(Calendar.MONTH) + 1);// 获取当前月份
+        }
+        if(c.get(Calendar.DAY_OF_MONTH)<10){
+            mDay = "0"+String.valueOf(c.get(Calendar.DAY_OF_MONTH));// 获取当前月份的日期号码
+        }else {
+            mDay = String.valueOf(c.get(Calendar.DAY_OF_MONTH));// 获取当前月份的日期号码
+        }
+        return mYear+"-"+mMonth + "-" + mDay;
+    }
+    public String getTime(){
+        String timeStr=null;
+        final Calendar c = Calendar.getInstance();
+        c.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
+        int mtime=c.get(Calendar.HOUR_OF_DAY);
+        int mHour = c.get(Calendar.HOUR);//时
+        int mMinute = c.get(Calendar.MINUTE);//分
+        int seconds=c.get(Calendar.SECOND);
+        if (mtime>=0&&mtime<=5){
+            timeStr="凌晨";
+        }else if (mtime>5&&mtime<8){
+            timeStr="早晨";
+        }else if(mtime>8&&mtime<12){
+            timeStr="上午";
+        }else if(mtime>=12&&mtime<14){
+            timeStr="中午";
+        }else if(mtime>=14&&mtime<18){
+            timeStr="下午";
+        }else if(mtime>=18&&mtime<19){
+            timeStr="傍晚";
+        }else if(mtime>=19&&mtime<=22){
+            timeStr="晚上";
+        }else if(mtime>22){
+            timeStr="深夜";
+        }
+        return checknum(mtime)+":"+checknum(mMinute)+":"+checknum(seconds);
+    }
+    private String checknum(int num){
+        String strnum=null;
+        if (num<10){
+            strnum="0"+num;
+        }else {
+            strnum=num+"";
+        }
+        return strnum;
+    }
+
 
 //    void ifspeaking(){
 //        StringBuffer param = new StringBuffer();

@@ -11,7 +11,7 @@
         android:name=".base.BaseApplication"
         android:theme="@style/AppTheme">
         <service android:name=".venue.MdUsbService"/>
-        <activity android:name=".activity.WelcomeActivity"
+        <activity android:name=".activity.SettingActivity"
             android:theme="@style/AppThemenew"
             android:windowSoftInputMode="stateAlwaysHidden"
             android:screenOrientation="portrait">
@@ -21,12 +21,12 @@
             <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
         </intent-filter>
         </activity>
-        <activity android:name=".activity.SettingActivity"
-            android:theme="@style/AppThemenew"
-            android:windowSoftInputMode="stateHidden"
-            >
+        <!--<activity android:name=".activity.SettingActivity"-->
+            <!--android:theme="@style/AppThemenew"-->
+            <!--android:windowSoftInputMode="stateHidden"-->
+            <!--&gt;-->
 
-        </activity>
+        <!--</activity>-->
         <activity android:name=".activity.MainActivity"
             android:theme="@style/AppThemenew"
             android:windowSoftInputMode="stateHidden"

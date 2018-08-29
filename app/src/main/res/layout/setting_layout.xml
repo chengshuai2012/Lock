@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/main_bg">
+    <include layout="@layout/lock_head_main" />
+
+
+    <LinearLayout
+        android:id="@+id/adminmessage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:layout_gravity="center"
+            android:gravity="center">
+            <EditText
+                android:id="@+id/et_input"
+                android:layout_marginLeft="20dp"
+                android:layout_width="100px"
+                android:inputType="number"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:digits="0123456789"
+                android:textColor="@color/black"
+                android:textSize="30sp" />
+
+            <Button
+                android:id="@+id/open_cabinetnum"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="打开柜号"
+                android:textSize="@dimen/text_size_30sp" />
+            <Button
+                android:id="@+id/clean_cabinetnum"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="清除柜号"
+                android:textSize="@dimen/text_size_30sp" />
+            <Button
+                android:id="@+id/check_record"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="查看记录"
+                android:textSize="@dimen/text_size_30sp" />
+            <Button
+                android:id="@+id/open_lockPlate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="打开锁板"
+                android:textSize="@dimen/text_size_30sp" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:layout_gravity="center"
+            android:gravity="center">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:textColor="@color/white"
+                android:text="柜号:"
+                android:textSize="@dimen/text_size_30sp" />
+            <EditText
+                android:id="@+id/et_cabinetnum"
+                android:layout_marginLeft="20dp"
+                android:layout_width="100px"
+                android:inputType="number"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:digits="0123456789"
+                android:textColor="@color/black"
+                android:textSize="30sp" />
+            <Button
+                android:id="@+id/cabinet_repair"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="维修"
+                android:textSize="@dimen/text_size_30sp" />
+            <Button
+                android:id="@+id/cabinet_isuse"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="可用"
+                android:textSize="@dimen/text_size_30sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginTop="50dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center">
+            <Button
+                android:id="@+id/check_all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="查看所有"
+                android:textSize="@dimen/text_size_30sp" />
+            <Button
+                android:id="@+id/clean_all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="50dp"
+                android:background="#ff0000"
+                android:text="清除所有"
+                android:textSize="@dimen/text_size_30sp" />
+            <Button
+                android:id="@+id/open_all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="50dp"
+                android:text="打开所有"
+                android:textSize="@dimen/text_size_30sp" />
+        </LinearLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_marginTop="50dp">
+            <Button
+                android:id="@+id/open_app"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="重启软件"
+                android:textSize="@dimen/text_size_30sp"
+                android:layout_alignParentRight="true"/>
+            <Button
+                android:id="@+id/chang_pdw"
+                android:layout_toLeftOf="@id/open_app"
+                android:layout_width="wrap_content"
+                android:layout_marginRight="50dp"
+                android:layout_height="wrap_content"
+                android:text="修改密码"
+                android:textSize="@dimen/text_size_30sp"
+                />
+            <Button
+                android:id="@+id/back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@id/chang_pdw"
+                android:text="返回"
+                android:layout_marginRight="50dp"
+                android:textSize="@dimen/text_size_30sp" />
+        </RelativeLayout>
+        <LinearLayout
+            android:layout_marginTop="50dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center"
+            android:gravity="center">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="锁板:"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_30sp" />
+            <EditText
+                android:id="@+id/et_lockPlate"
+                android:layout_marginLeft="10dp"
+                android:layout_width="100px"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:background="@color/white"
+                android:digits="0123456789"
+                android:textColor="@color/black"
+                android:textSize="30sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:textColor="@color/white"
+                android:text="柜子数:"
+                android:textSize="@dimen/text_size_30sp" />
+            <EditText
+                android:id="@+id/et_cabinet_count"
+                android:layout_marginLeft="10dp"
+                android:layout_width="100px"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:background="@color/white"
+                android:digits="0123456789"
+                android:textColor="@color/black"
+                android:textSize="30sp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="开始线路号:"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_30sp" />
+            <EditText
+                android:id="@+id/start_lock"
+                android:layout_marginLeft="10dp"
+                android:layout_width="100px"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:background="@color/white"
+                android:digits="0123456789"
+                android:textColor="@color/black"
+                android:textSize="30sp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="开始柜号:"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_30sp" />
+            <EditText
+                android:id="@+id/start_number"
+                android:layout_marginLeft="10dp"
+                android:layout_width="100px"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:inputType="number"
+                android:digits="0123456789"
+                android:textColor="@color/black"
+                android:textSize="30sp" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_marginTop="50dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center"
+            android:gravity="center">
+            <Button
+                android:id="@+id/cabinet_add"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="增加"
+                android:textSize="@dimen/text_size_30sp" />
+            <Button
+                android:id="@+id/cabinet_delect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="删除"
+                android:textSize="@dimen/text_size_30sp" />
+        </LinearLayout>
+
+    </LinearLayout>
+</LinearLayout>
