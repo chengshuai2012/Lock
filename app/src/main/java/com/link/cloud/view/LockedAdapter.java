@@ -53,6 +53,7 @@ public class LockedAdapter extends BaseAdapter {
         }
         viewHolder = (ViewHolder) convertView.getTag();
         CabinetNumber user = userList.get(position);
+        viewHolder._id.setText(position+1+"");
         viewHolder.lock_route.setText(user.getCircuitNumber());
         viewHolder.lock_lockplate.setText(user.getCabinetLockPlate());
         viewHolder.lock_cabinetNumber.setText(user.getCabinetNumber());

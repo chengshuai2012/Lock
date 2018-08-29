@@ -11,6 +11,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -403,6 +404,7 @@ public class SettingActivity extends Activity {
     public class MesReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
+            Log.e("onReceive: ","..." );
             headText03Main.setText(intent.getStringExtra("timeStr"));
             opentime=intent.getStringExtra("timeStr");
             headText01.setText(intent.getStringExtra("timeData"));

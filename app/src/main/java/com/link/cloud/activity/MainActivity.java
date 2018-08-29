@@ -18,8 +18,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.link.cloud.R;
+import com.link.cloud.bean.CabinetNumber;
 import com.link.cloud.bean.Person;
 import com.link.cloud.utils.HexUtil;
 import com.link.cloud.venue.MdDevice;
@@ -28,6 +30,7 @@ import com.link.cloud.venue.ModelImgMng;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -168,6 +171,8 @@ public class MainActivity extends Activity {
     private RealmResults<Person> all;
     private List<Person> peoples;
     private Unbinder bind;
+    private RealmResults<CabinetNumber> allBox;
+    private Random random;
 
     private List<MdDevice> getDevList() {
 
@@ -289,7 +294,23 @@ public class MainActivity extends Activity {
         bindService(intent, mdSrvConn, Service.BIND_AUTO_CREATE);
         realm = Realm.getDefaultInstance();
         getPerson();
+        getBox();
+        random = new Random();
     }
+    List<CabinetNumber> boxs =new ArrayList<>();
+    private void getBox() {
+        allBox = realm.where(CabinetNumber.class).equalTo("isUser","可用").findAll();
+        this.allBox.addChangeListener(new RealmChangeListener<RealmResults<CabinetNumber>>() {
+            @Override
+            public void onChange(RealmResults<CabinetNumber> cabinetNumbers) {
+                boxs.clear();
+                boxs.addAll(cabinetNumbers);
+            }
+        });
+        boxs.clear();
+        boxs.addAll(realm.copyFromRealm(allBox));
+    }
+
     @OnClick({R.id.main_bt_01, R.id.main_bt_02, R.id.main_bt_03})
     public void OnClick(View view) {
         switch (view.getId()) {
@@ -522,7 +543,9 @@ public class MainActivity extends Activity {
                         textError.setText(getString(R.string.check_successful));
                         layoutThree.setVisibility(View.INVISIBLE);
                         openLockLayout.setVisibility(View.VISIBLE);
-                        person.setUid("22222");
+                        int i = random.nextInt(boxs.size());
+                        String cabinetNumber = boxs.get(i).getCabinetNumber();
+                        person.setUid(cabinetNumber);
                         person.setFeature(HexUtil.bytesToHexString(feature));
                         realm.executeTransaction(new Realm.Transaction() {
                             @Override
@@ -530,6 +553,7 @@ public class MainActivity extends Activity {
                                 realm.copyToRealm(person);
                             }
                         });
+                        openLock(cabinetNumber);
                         isWorkFinsh = true;
                         modelImgMng.reset();
                         fingersign();
@@ -557,6 +581,95 @@ public class MainActivity extends Activity {
             }
         }
 
+    }
+
+    private void openLock(String cabinetNumber) {
+        StringBuffer fingerstr=new StringBuffer();
+        fingerstr.append(byte2hex(feauter3));
+        cabinetNumberDao=BaseApplication.getInstances().getDaoSession().getCabinetNumberDao();
+        QueryBuilder queryBuilder=cabinetNumberDao.queryBuilder();
+        list_cabinet=queryBuilder.where(CabinetNumberDao.Properties.IsUser.eq("可用")).list();
+        lockcounts=new int[list_cabinet.size()];
+        if (list_cabinet.size()>0) {
+            for (int i = 0; i < list_cabinet.size(); i++) {
+                lockcounts[i] = Integer.parseInt(list_cabinet.get(i).getCabinetNumber());
+            }
+            if (lockcounts.length >= 1) {
+                Random random = new Random();//创建随机对象
+                int arrIdx = random.nextInt(lockcounts.length);
+                count = lockcounts[arrIdx] + "";
+                layout_three.setVisibility(View.GONE);
+                open_lock_layout.setVisibility(View.VISIBLE);
+                text_number.setText(count);
+                Logger.e("FirstFragment" + "======" + count);
+                member = new Member();
+                cabinetNumber = new CabinetNumber();
+                save_lock = queryBuilder.where(CabinetNumberDao.Properties.CabinetNumber.eq(count)).list();
+                if (save_lock.size() > 0) {
+                    text_error.setText("存件成功");
+                    cabinetNumber.setId(save_lock.get(0).getId());
+                    cabinetNumber.setIsUser("使用中");
+                    cabinetNumber.setCabinetLockPlate(save_lock.get(0).getCabinetLockPlate());
+                    cabinetNumber.setCircuitNumber(save_lock.get(0).getCircuitNumber());
+                    cabinetNumber.setCabinetNumber(count);
+                    cabinetNumber.setBegintime(opentime);
+                    cabinetNumber.setFINGERMODEL(fingerstr.toString());
+                    cabinetNumberDao.update(cabinetNumber);
+                }
+                memberDao = BaseApplication.getInstances().getDaoSession().getMemberDao();
+                member.setId(save_lock.get(0).getId());
+                member.setBegintime(opentime);
+                member.setCabinetLockPlate(save_lock.get(0).getCabinetLockPlate());
+                member.setCabinetNumber(count);
+                member.setCircuitNumber(save_lock.get(0).getCircuitNumber());
+                member.setFingermodel(fingerstr.toString());
+                memberDao.insert(member);
+
+            }else {
+                Toast.makeText(getActivity(),"没有可用的柜号",Toast.LENGTH_LONG).show();
+            }
+        }
+        Logger.e("FirstFragment"+"count"+count);
+        if(count!=null&&!count.equals("")) {
+            CabinetRecordDao cabinetRecordDao = BaseApplication.getInstances().getDaoSession().getCabinetRecordDao();
+            CabinetRecord cabinetRecord = new CabinetRecord();
+            cabinetRecord.setCabinetNumber(count);
+            cabinetRecord.setCabinetStating("存件");
+            cabinetRecord.setMemberName("会员");
+            cabinetRecord.setOpentime(opentime);
+            cabinetRecordDao.insert(cabinetRecord);
+            queryBuilder = cabinetNumberDao.queryBuilder();
+            list_cabinet = queryBuilder.where(CabinetNumberDao.Properties.CabinetNumber.eq(count)).list();
+            int nuberlock = Integer.parseInt(list_cabinet.get(0).getCircuitNumber());
+            if (nuberlock > 10) {
+                nuberlock = nuberlock % 10;
+                Logger.e("FirstFragment===" + nuberlock);
+                if (nuberlock == 0) {
+                    nuberlock = 10;
+                }
+            }
+            try {
+                if (Integer.parseInt(list_cabinet.get(0).getCabinetLockPlate()) <= 10) {
+                    serialpprt_wk1.getOutputStream().write(openDoorUtil.openOneDoor(Integer.parseInt(list_cabinet.get(0).getCabinetLockPlate()), nuberlock));
+                } else if (Integer.parseInt(list_cabinet.get(0).getCabinetLockPlate()) > 10 && Integer.parseInt(list_cabinet.get(0).getCabinetLockPlate()) < 20) {
+                   serialpprt_wk2.getOutputStream().write(openDoorUtil.openOneDoor(Integer.parseInt(list_cabinet.get(0).getCabinetLockPlate()) % 10, nuberlock));
+                } else if (Integer.parseInt(list_cabinet.get(0).getCabinetLockPlate()) > 20 && Integer.parseInt(list_cabinet.get(0).getCabinetLockPlate()) < 30) {
+                    serialpprt_wk3.getOutputStream().write(openDoorUtil.openOneDoor(Integer.parseInt(list_cabinet.get(0).getCabinetLockPlate()) % 10, nuberlock));
+                } else if (Integer.parseInt(list_cabinet.get(0).getCabinetLockPlate()) == 20) {
+                   serialpprt_wk2.getOutputStream().write(openDoorUtil.openOneDoor(10, nuberlock));
+                } else if (Integer.parseInt(list_cabinet.get(0).getCabinetLockPlate()) == 30) {
+                    serialpprt_wk3.getOutputStream().write(openDoorUtil.openOneDoor(10, nuberlock));
+                }
+                Logger.e("FirstFragment===" + Integer.parseInt(list_cabinet.get(0).getCabinetLockPlate()) + "====" + count);
+            } catch (Exception e) {
+            } finally {
+//                                if (timer != null) {
+//                                    timer.cancel();
+//                                }
+            }
+        }else {
+            Toast.makeText(getActivity(),"没有可用的柜号",Toast.LENGTH_LONG).show();
+        }
     }
 
     private boolean identifyNewImg(final byte[] img, int[] pos, float[] score) {
@@ -618,11 +731,13 @@ public class MainActivity extends Activity {
         all.addChangeListener(new RealmChangeListener<RealmResults<Person>>() {
             @Override
             public void onChange(RealmResults<Person> people) {
-                peoples = realm.copyFromRealm(people);
-                Log.e(TAG, "onChange:" + peoples.size());
+                peoples.clear();
+                peoples.addAll(people);
+
             }
         });
-        peoples = realm.copyFromRealm(all);
+        peoples.clear();
+        peoples.addAll(all);
     }
 
 

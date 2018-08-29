@@ -27,6 +27,7 @@ import android.app.Application;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 import com.tencent.bugly.crashreport.CrashReport;
 
@@ -43,7 +44,6 @@ import io.realm.RealmConfiguration;
  */
 public class BaseApplication extends Application {
     public static final String ACTION_UPDATEUI = "com.link.cloud.updateTiemStr";
-    public static final String ACTION_UPDATE = "com.link.cloud.updateTiemData";
     @Override
     public void onCreate() {
         super.onCreate();
@@ -68,9 +68,9 @@ public class BaseApplication extends Application {
                     final Intent intent = new Intent();
                     intent.setAction(ACTION_UPDATEUI);
                     intent.putExtra("timeStr",getTime());
-                    intent.setAction(ACTION_UPDATE);
                     intent.putExtra("timeData",getData());
                     sendBroadcast(intent);
+                    Log.e("handleMessage: ", getTime());
                     mHandler.sendEmptyMessageDelayed(1,1000);
                     break;
                 default:
