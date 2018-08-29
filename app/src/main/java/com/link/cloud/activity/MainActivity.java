@@ -543,17 +543,22 @@ public class MainActivity extends Activity {
                         textError.setText(getString(R.string.check_successful));
                         layoutThree.setVisibility(View.INVISIBLE);
                         openLockLayout.setVisibility(View.VISIBLE);
-                        int i = random.nextInt(boxs.size());
-                        String cabinetNumber = boxs.get(i).getCabinetNumber();
-                        person.setUid(cabinetNumber);
-                        person.setFeature(HexUtil.bytesToHexString(feature));
-                        realm.executeTransaction(new Realm.Transaction() {
-                            @Override
-                            public void execute(Realm realm) {
-                                realm.copyToRealm(person);
-                            }
-                        });
-                        openLock(cabinetNumber);
+                        if(boxs.size()>0){
+                            int i = random.nextInt(boxs.size());
+                            String cabinetNumber = boxs.get(i).getCabinetNumber();
+                            person.setUid(cabinetNumber);
+                            person.setFeature(HexUtil.bytesToHexString(feature));
+                            realm.executeTransaction(new Realm.Transaction() {
+                                @Override
+                                public void execute(Realm realm) {
+                                    realm.copyToRealm(person);
+                                }
+                            });
+                            openLock(cabinetNumber);
+                        }else {
+                            Toast.makeText(MainActivity.this,"没有可用的柜号",Toast.LENGTH_LONG).show();
+                        }
+
                         isWorkFinsh = true;
                         modelImgMng.reset();
                         fingersign();
@@ -584,12 +589,6 @@ public class MainActivity extends Activity {
     }
 
     private void openLock(String cabinetNumber) {
-        StringBuffer fingerstr=new StringBuffer();
-        fingerstr.append(byte2hex(feauter3));
-        cabinetNumberDao=BaseApplication.getInstances().getDaoSession().getCabinetNumberDao();
-        QueryBuilder queryBuilder=cabinetNumberDao.queryBuilder();
-        list_cabinet=queryBuilder.where(CabinetNumberDao.Properties.IsUser.eq("可用")).list();
-        lockcounts=new int[list_cabinet.size()];
         if (list_cabinet.size()>0) {
             for (int i = 0; i < list_cabinet.size(); i++) {
                 lockcounts[i] = Integer.parseInt(list_cabinet.get(i).getCabinetNumber());
@@ -626,7 +625,7 @@ public class MainActivity extends Activity {
                 memberDao.insert(member);
 
             }else {
-                Toast.makeText(getActivity(),"没有可用的柜号",Toast.LENGTH_LONG).show();
+
             }
         }
         Logger.e("FirstFragment"+"count"+count);
@@ -660,15 +659,11 @@ public class MainActivity extends Activity {
                 } else if (Integer.parseInt(list_cabinet.get(0).getCabinetLockPlate()) == 30) {
                     serialpprt_wk3.getOutputStream().write(openDoorUtil.openOneDoor(10, nuberlock));
                 }
-                Logger.e("FirstFragment===" + Integer.parseInt(list_cabinet.get(0).getCabinetLockPlate()) + "====" + count);
+
             } catch (Exception e) {
             } finally {
-//                                if (timer != null) {
-//                                    timer.cancel();
-//                                }
+
             }
-        }else {
-            Toast.makeText(getActivity(),"没有可用的柜号",Toast.LENGTH_LONG).show();
         }
     }
 
