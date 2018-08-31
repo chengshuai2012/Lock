@@ -1,15 +1,22 @@
 package com.link.cloud.activity;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -20,18 +27,25 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.hotelmanager.xzy.util.OpenDoorUtil;
 import com.link.cloud.R;
+import com.link.cloud.base.BaseApplication;
 import com.link.cloud.bean.CabinetNumber;
+import com.link.cloud.bean.CabinetRecord;
 import com.link.cloud.bean.Person;
 import com.link.cloud.utils.HexUtil;
+import com.link.cloud.utils.ToastUtils;
 import com.link.cloud.venue.MdDevice;
 import com.link.cloud.venue.MdUsbService;
 import com.link.cloud.venue.ModelImgMng;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import android_serialport_api.SerialPort;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -169,10 +183,13 @@ public class MainActivity extends Activity {
 
     });
     private RealmResults<Person> all;
-    private List<Person> peoples;
+    private List<Person> peoples = new ArrayList<>();
     private Unbinder bind;
     private RealmResults<CabinetNumber> allBox;
     private Random random;
+    private String uid;
+    private RealmResults<CabinetNumber> isUser;
+    private RealmResults<CabinetNumber> allCabinetNumber;
 
     private List<MdDevice> getDevList() {
 
@@ -281,7 +298,7 @@ public class MainActivity extends Activity {
     });
     private byte[] img;
     Realm realm;
-
+    SharedPreferences userInfo;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -295,7 +312,87 @@ public class MainActivity extends Activity {
         realm = Realm.getDefaultInstance();
         getPerson();
         getBox();
+        getTotal();
+        getUsed();
+        headText02.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                ExitAlertDialog dialog = new ExitAlertDialog(MainActivity.this);
+                dialog.show();
+                return false;
+            }
+        });
+        userInfo=getSharedPreferences("user_info",0);
+        String devicepwd = userInfo.getString("devicepwd", "");
+        if(TextUtils.isEmpty(devicepwd)){
+            userInfo.edit().putString("devicepwd","888888");
+        }
         random = new Random();
+        openDoorUtil = new OpenDoorUtil();
+        try {
+            serialpprt_wk1 = new SerialPort(new File("/dev/ttysWK1"), 9600, 0);
+        } catch (SecurityException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        try {
+            serialpprt_wk2 = new SerialPort(new File("/dev/ttysWK2"), 9600, 0);
+        } catch (SecurityException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        try {
+            serialpprt_wk3 = new SerialPort(new File("/dev/ttysWK3"), 9600, 0);
+        } catch (SecurityException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        mesReceiver = new MesReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(BaseApplication.ACTION_UPDATEUI);
+        registerReceiver(mesReceiver, intentFilter);
+    }
+
+    private void getUsed() {
+        isUser = realm.where(CabinetNumber.class).equalTo("isUser", "使用中").findAll();
+        isUser.addChangeListener(new RealmChangeListener<RealmResults<CabinetNumber>>() {
+            @Override
+            public void onChange(RealmResults<CabinetNumber> cabinetNumbers) {
+                textNum2.setText(cabinetNumbers.size()+"");
+                Log.e("onChange: ","userchanged" );
+            }
+        });
+        textNum2.setText(isUser.size()+"");
+    }
+
+    private void getTotal() {
+        allCabinetNumber = realm.where(CabinetNumber.class).findAll();
+        allCabinetNumber.addChangeListener(new RealmChangeListener<RealmResults<CabinetNumber>>() {
+            @Override
+            public void onChange(RealmResults<CabinetNumber> cabinetNumbers) {
+                textNum1.setText(cabinetNumbers.size()+"");
+            }
+        });
+        textNum1.setText(allCabinetNumber.size()+"");
+    }
+    MesReceiver mesReceiver;
+    String opentime;
+    public class MesReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            headText03Main.setText(intent.getStringExtra("timeStr"));
+            opentime=intent.getStringExtra("timeStr");
+            headText01.setText(intent.getStringExtra("timeData"));
+        }
     }
     List<CabinetNumber> boxs =new ArrayList<>();
     private void getBox() {
@@ -305,13 +402,15 @@ public class MainActivity extends Activity {
             public void onChange(RealmResults<CabinetNumber> cabinetNumbers) {
                 boxs.clear();
                 boxs.addAll(cabinetNumbers);
+                textNum3.setText(cabinetNumbers.size()+"");
             }
         });
         boxs.clear();
         boxs.addAll(realm.copyFromRealm(allBox));
+        textNum3.setText(allBox.size()+"");
     }
-
-    @OnClick({R.id.main_bt_01, R.id.main_bt_02, R.id.main_bt_03})
+    int openType = 1;
+    @OnClick({R.id.main_bt_01, R.id.main_bt_02, R.id.main_bt_03,R.id.head_text_02})
     public void OnClick(View view) {
         switch (view.getId()) {
             case R.id.main_bt_01:
@@ -326,6 +425,12 @@ public class MainActivity extends Activity {
                 workHandler.sendEmptyMessage(18);
                 break;
             case R.id.main_bt_02:
+                mainButton.setVisibility(View.INVISIBLE);
+                workIdentify.setVisibility(View.VISIBLE);
+                layoutThree.setVisibility(View.VISIBLE);
+                openLockLayout.setVisibility(View.INVISIBLE);
+                textError.setText(getString(R.string.register_template_tip));
+                openType=1;
                 time = 40;
                 isIdentyFinsh = false;
                 isWorkFinsh = true;
@@ -333,14 +438,83 @@ public class MainActivity extends Activity {
                 workHandler.sendEmptyMessage(19);
                 break;
             case R.id.main_bt_03:
+                mainButton.setVisibility(View.INVISIBLE);
+                workIdentify.setVisibility(View.VISIBLE);
+                layoutThree.setVisibility(View.VISIBLE);
+                openLockLayout.setVisibility(View.INVISIBLE);
+                textError.setText(getString(R.string.register_template_tip));
                 time = 40;
+                openType=2;
                 isIdentyFinsh = false;
                 isWorkFinsh = true;
                 isLive = true;
                 workHandler.sendEmptyMessage(19);
                 break;
+
         }
     }
+
+    private class ExitAlertDialog extends Dialog implements View.OnClickListener {
+        private Context mContext;
+        private EditText etPwd;
+        private Button btCancel;
+        private Button btConfirm;
+        private TextView texttilt;
+        public ExitAlertDialog(Context context, int theme) {
+            super(context, theme);
+            mContext = context;
+            initDialog();
+        }
+        public ExitAlertDialog(Context context) {
+            super(context, R.style.customer_dialog);
+            mContext = context;
+            initDialog();
+        }
+        private void initDialog() {
+            View view = LayoutInflater.from(mContext).inflate(R.layout.dialog_exit_confirm, null);
+            setContentView(view);
+            btCancel = (Button) view.findViewById(R.id.btCancel);
+            btConfirm = (Button) view.findViewById(R.id.btConfirm);
+            etPwd = (EditText) view.findViewById(R.id.deviceCode);
+            texttilt=(TextView)view.findViewById(R.id.text_title);
+            btCancel.setOnClickListener(this);
+            btConfirm.setOnClickListener(this);
+        }
+        @Override
+        public void show() {
+            etPwd.setText("");
+            super.show();
+        }
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.btCancel:
+                    this.dismiss();
+                    break;
+                case R.id.btConfirm:
+                        String pwd = etPwd.getText().toString().trim();
+                        if (TextUtils.isEmpty(pwd)) {
+                            ToastUtils.show(mContext, "请输入密码", ToastUtils.LENGTH_SHORT);
+                            return;
+                        }
+
+
+                        String repwd = userInfo.getString("devicepwd","0");
+
+                        if (!pwd.equals(repwd)) {
+                            ToastUtils.show(mContext, "密码不正确", ToastUtils.LENGTH_SHORT);
+                            this.dismiss();
+                            return;
+                        }else {
+                            Intent intent = new Intent(MainActivity.this,SettingActivity.class);
+                            startActivity(intent);
+                            this.dismiss();
+                        }
+                    break;
+                    }
+
+            }
+        }
 
     boolean isLive = false;
 
@@ -350,6 +524,7 @@ public class MainActivity extends Activity {
         unbindService(mdSrvConn);
         realm.close();
         bind.unbind();
+        unregisterReceiver(mesReceiver);
     }
 
 
@@ -377,7 +552,9 @@ public class MainActivity extends Activity {
                 case 18:
                     time--;
                     if (time == 0) {
-                        finish();
+                        isWorkFinsh=true;
+                        mainButton.setVisibility(View.VISIBLE);
+                        workIdentify.setVisibility(View.GONE);
                     }
                     textError.setText(getString(R.string.register_template_tip));
                     timeForfinger.setText(time+"");
@@ -395,14 +572,16 @@ public class MainActivity extends Activity {
                 case 19:
                     time--;
                     if (time == 0) {
-                        finish();
+                        isIdentyFinsh=true;
+                        mainButton.setVisibility(View.VISIBLE);
+                        workIdentify.setVisibility(View.GONE);
                     }
                     workHandler.removeMessages(19);
                     int state2 = getState();
                     if (state2 == 3) {
                         identifyModel();
                     }
-
+                    timeForfinger.setText(time+"");
                     if (!isIdentyFinsh) {
                         workHandler.sendEmptyMessageDelayed(19, 1000);
                     }
@@ -462,6 +641,11 @@ public class MainActivity extends Activity {
                 handler.obtainMessage(MSG_SHOW_LOG, "认证成功").sendToTarget();
                 mdDeviceBinder.closeDevice(0);
                 bOpen = false;
+                textError.setText(getString(R.string.check_successful));
+                layoutThree.setVisibility(View.INVISIBLE);
+                openLockLayout.setVisibility(View.VISIBLE);
+                textNumber.setText(uid);
+                fingersign();
             } else {
                 Log.e("identify fail,", "pos=" + pos[0]);
                 handler.obtainMessage(MSG_SHOW_LOG, "认证失败").sendToTarget();
@@ -539,11 +723,12 @@ public class MainActivity extends Activity {
                         //    handler.obtainMessage(MSG_SHOW_LOG,tips).sendToTarget();
                         //}
                         //----------------------------------------------------------
-                        final Person person = new Person();
-                        textError.setText(getString(R.string.check_successful));
-                        layoutThree.setVisibility(View.INVISIBLE);
-                        openLockLayout.setVisibility(View.VISIBLE);
+
                         if(boxs.size()>0){
+                            final Person person = new Person();
+                            textError.setText(getString(R.string.check_successful));
+                            layoutThree.setVisibility(View.INVISIBLE);
+                            openLockLayout.setVisibility(View.VISIBLE);
                             int i = random.nextInt(boxs.size());
                             String cabinetNumber = boxs.get(i).getCabinetNumber();
                             person.setUid(cabinetNumber);
@@ -587,84 +772,64 @@ public class MainActivity extends Activity {
         }
 
     }
-
+    OpenDoorUtil openDoorUtil;
+    public SerialPort serialpprt_wk1 = null;
+    public SerialPort serialpprt_wk2 = null;
+    public SerialPort serialpprt_wk3 = null;
     private void openLock(String cabinetNumber) {
-        if (list_cabinet.size()>0) {
-            for (int i = 0; i < list_cabinet.size(); i++) {
-                lockcounts[i] = Integer.parseInt(list_cabinet.get(i).getCabinetNumber());
-            }
-            if (lockcounts.length >= 1) {
-                Random random = new Random();//创建随机对象
-                int arrIdx = random.nextInt(lockcounts.length);
-                count = lockcounts[arrIdx] + "";
-                layout_three.setVisibility(View.GONE);
-                open_lock_layout.setVisibility(View.VISIBLE);
-                text_number.setText(count);
-                Logger.e("FirstFragment" + "======" + count);
-                member = new Member();
-                cabinetNumber = new CabinetNumber();
-                save_lock = queryBuilder.where(CabinetNumberDao.Properties.CabinetNumber.eq(count)).list();
-                if (save_lock.size() > 0) {
-                    text_error.setText("存件成功");
-                    cabinetNumber.setId(save_lock.get(0).getId());
-                    cabinetNumber.setIsUser("使用中");
-                    cabinetNumber.setCabinetLockPlate(save_lock.get(0).getCabinetLockPlate());
-                    cabinetNumber.setCircuitNumber(save_lock.get(0).getCircuitNumber());
-                    cabinetNumber.setCabinetNumber(count);
-                    cabinetNumber.setBegintime(opentime);
-                    cabinetNumber.setFINGERMODEL(fingerstr.toString());
-                    cabinetNumberDao.update(cabinetNumber);
+        final CabinetNumber openCabinet = realm.where(CabinetNumber.class).equalTo("cabinetNumber", cabinetNumber).findFirst();
+        boolean b = openLock(cabinetNumber, openCabinet);
+        if(b){
+            realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    openCabinet.setIsUser("使用中");
                 }
-                memberDao = BaseApplication.getInstances().getDaoSession().getMemberDao();
-                member.setId(save_lock.get(0).getId());
-                member.setBegintime(opentime);
-                member.setCabinetLockPlate(save_lock.get(0).getCabinetLockPlate());
-                member.setCabinetNumber(count);
-                member.setCircuitNumber(save_lock.get(0).getCircuitNumber());
-                member.setFingermodel(fingerstr.toString());
-                memberDao.insert(member);
-
-            }else {
-
-            }
-        }
-        Logger.e("FirstFragment"+"count"+count);
-        if(count!=null&&!count.equals("")) {
-            CabinetRecordDao cabinetRecordDao = BaseApplication.getInstances().getDaoSession().getCabinetRecordDao();
-            CabinetRecord cabinetRecord = new CabinetRecord();
-            cabinetRecord.setCabinetNumber(count);
+            });
+            final CabinetRecord cabinetRecord = new CabinetRecord();
+            cabinetRecord.setCabinetNumber(cabinetNumber);
             cabinetRecord.setCabinetStating("存件");
             cabinetRecord.setMemberName("会员");
             cabinetRecord.setOpentime(opentime);
-            cabinetRecordDao.insert(cabinetRecord);
-            queryBuilder = cabinetNumberDao.queryBuilder();
-            list_cabinet = queryBuilder.where(CabinetNumberDao.Properties.CabinetNumber.eq(count)).list();
-            int nuberlock = Integer.parseInt(list_cabinet.get(0).getCircuitNumber());
-            if (nuberlock > 10) {
-                nuberlock = nuberlock % 10;
-                Logger.e("FirstFragment===" + nuberlock);
-                if (nuberlock == 0) {
-                    nuberlock = 10;
+            realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    realm.copyToRealm(cabinetRecord);
                 }
-            }
-            try {
-                if (Integer.parseInt(list_cabinet.get(0).getCabinetLockPlate()) <= 10) {
-                    serialpprt_wk1.getOutputStream().write(openDoorUtil.openOneDoor(Integer.parseInt(list_cabinet.get(0).getCabinetLockPlate()), nuberlock));
-                } else if (Integer.parseInt(list_cabinet.get(0).getCabinetLockPlate()) > 10 && Integer.parseInt(list_cabinet.get(0).getCabinetLockPlate()) < 20) {
-                   serialpprt_wk2.getOutputStream().write(openDoorUtil.openOneDoor(Integer.parseInt(list_cabinet.get(0).getCabinetLockPlate()) % 10, nuberlock));
-                } else if (Integer.parseInt(list_cabinet.get(0).getCabinetLockPlate()) > 20 && Integer.parseInt(list_cabinet.get(0).getCabinetLockPlate()) < 30) {
-                    serialpprt_wk3.getOutputStream().write(openDoorUtil.openOneDoor(Integer.parseInt(list_cabinet.get(0).getCabinetLockPlate()) % 10, nuberlock));
-                } else if (Integer.parseInt(list_cabinet.get(0).getCabinetLockPlate()) == 20) {
-                   serialpprt_wk2.getOutputStream().write(openDoorUtil.openOneDoor(10, nuberlock));
-                } else if (Integer.parseInt(list_cabinet.get(0).getCabinetLockPlate()) == 30) {
-                    serialpprt_wk3.getOutputStream().write(openDoorUtil.openOneDoor(10, nuberlock));
-                }
+            });
+        }
 
-            } catch (Exception e) {
-            } finally {
+    }
 
+    private boolean openLock(String cabinetNumber, CabinetNumber openCabinet) {
+        boolean isOpenSuccess=false;
+        int nuberlock = Integer.parseInt(cabinetNumber);
+        if (nuberlock > 10) {
+            nuberlock = nuberlock % 10;
+            if (nuberlock == 0) {
+                nuberlock = 10;
             }
         }
+        try {
+            if (Integer.parseInt(openCabinet.getCabinetLockPlate()) <= 10) {
+                serialpprt_wk1.getOutputStream().write(openDoorUtil.openOneDoor(Integer.parseInt(openCabinet.getCabinetLockPlate()), nuberlock));
+            } else if (Integer.parseInt(openCabinet.getCabinetLockPlate()) > 10 && Integer.parseInt(openCabinet.getCabinetLockPlate()) < 20) {
+                serialpprt_wk2.getOutputStream().write(openDoorUtil.openOneDoor(Integer.parseInt(openCabinet.getCabinetLockPlate()) % 10, nuberlock));
+            } else if (Integer.parseInt(openCabinet.getCabinetLockPlate()) > 20 && Integer.parseInt(openCabinet.getCabinetLockPlate()) < 30) {
+                serialpprt_wk3.getOutputStream().write(openDoorUtil.openOneDoor(Integer.parseInt(openCabinet.getCabinetLockPlate()) % 10, nuberlock));
+            } else if (Integer.parseInt(openCabinet.getCabinetLockPlate()) == 20) {
+                serialpprt_wk2.getOutputStream().write(openDoorUtil.openOneDoor(10, nuberlock));
+            } else if (Integer.parseInt(openCabinet.getCabinetLockPlate()) == 30) {
+                serialpprt_wk3.getOutputStream().write(openDoorUtil.openOneDoor(10, nuberlock));
+            }
+            textNumber.setText(cabinetNumber);
+            isOpenSuccess=true;
+        } catch (Exception e) {
+            textEnd.setText("开柜失败,请重新开柜");
+        } finally {
+
+        }
+        return isOpenSuccess;
     }
 
     private boolean identifyNewImg(final byte[] img, int[] pos, float[] score) {
@@ -678,7 +843,6 @@ public class MainActivity extends Activity {
 
         }
 
-
         byte[] allFeaturesBytes = HexUtil.hexStringToByte(builder.toString());
         builder.delete(0, builder.length());
         Log.e(TAG, "allFeaturesBytes: " + allFeaturesBytes.length);
@@ -689,14 +853,54 @@ public class MainActivity extends Activity {
         Log.e(TAG, "identifyResult: " + identifyResult);
 
         if (identifyResult) {//比对通过且得分达标时打印此手指绑定的用户名
-            String featureName = uidss[pos[0]];
-            Log.e(TAG, "identifyResult: " + featureName);
+            uid = uidss[pos[0]];
+            Log.e(TAG, "identifyResult: " + uid);
+            final CabinetNumber cabinetNumber = realm.where(CabinetNumber.class).equalTo("cabinetNumber", uid).findFirst();
+            boolean b = openLock(uid, cabinetNumber);
+            if (b){
+                if(openType==1){
+                    final CabinetRecord cabinetRecord = new CabinetRecord();
+                    cabinetRecord.setCabinetNumber(uid);
+                    cabinetRecord.setCabinetStating("续存");
+                    cabinetRecord.setMemberName("会员");
+                    cabinetRecord.setOpentime(opentime);
+                    realm.executeTransaction(new Realm.Transaction() {
+                        @Override
+                        public void execute(Realm realm) {
+                            realm.copyToRealm(cabinetRecord);
+                        }
+                    });
+                }else if(openType==2){
+                    final CabinetRecord cabinetRecord = new CabinetRecord();
+                    cabinetRecord.setCabinetNumber(uid);
+                    cabinetRecord.setCabinetStating("离场");
+                    cabinetRecord.setMemberName("会员");
+                    cabinetRecord.setOpentime(opentime);
+                    realm.executeTransaction(new Realm.Transaction() {
+                        @Override
+                        public void execute(Realm realm) {
+                            realm.copyToRealm(cabinetRecord);
+                        }
+                    });
+                    realm.executeTransaction(new Realm.Transaction() {
+                        @Override
+                        public void execute(Realm realm) {
+                            cabinetNumber.setIsUser("可用");
+                        }
+                    });
+                    final Person uid = realm.where(Person.class).equalTo("uid", this.uid).findFirst();
+                    realm.executeTransaction(new Realm.Transaction() {
+                        @Override
+                        public void execute(Realm realm) {
+                            uid.deleteFromRealm();
+                        }
+                    });
+                }
+            }
             isIdentyFinsh = true;
             return identifyResult;
         } else {
-
             return identifyResult;
-
 
         }
 

@@ -27,7 +27,6 @@ import android.app.Application;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 
 import com.tencent.bugly.crashreport.CrashReport;
 
@@ -70,7 +69,6 @@ public class BaseApplication extends Application {
                     intent.putExtra("timeStr",getTime());
                     intent.putExtra("timeData",getData());
                     sendBroadcast(intent);
-                    Log.e("handleMessage: ", getTime());
                     mHandler.sendEmptyMessageDelayed(1,1000);
                     break;
                 default:

@@ -11,7 +11,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -152,6 +151,7 @@ public class SettingActivity extends Activity {
         input = et_input.getText().toString().trim();
         switch (view.getId()){
             case R.id.cabinet_add:
+                start_num.setText("1");
                 if (TextUtils.isEmpty(et_lockPlate.getText().toString().trim())) {
                     Toast.makeText(SettingActivity.this, "请输入锁板号", Toast.LENGTH_LONG).show();
                 } else if (!TextUtils.isEmpty(et_lockPlate.getText().toString().trim()) && TextUtils.isEmpty(et_cabinet_count.getText().toString().trim())) {
@@ -404,7 +404,6 @@ public class SettingActivity extends Activity {
     public class MesReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.e("onReceive: ","..." );
             headText03Main.setText(intent.getStringExtra("timeStr"));
             opentime=intent.getStringExtra("timeStr");
             headText01.setText(intent.getStringExtra("timeData"));
@@ -489,6 +488,7 @@ public class SettingActivity extends Activity {
                         }else {
                             userInfo.edit().putString("devicepwd",pwd).commit();
                             ToastUtils.show(mContext, "密码修改成功", ToastUtils.LENGTH_SHORT);
+                            this.dismiss();
                         }
                     }
                     break;
