@@ -573,7 +573,7 @@ public class SettingActivity extends Activity {
             realm.executeTransaction(new Realm.Transaction() {
                 @Override
                 public void execute(Realm realm) {
-                    for (int i=0;i<allUseCabinetNumber.size();i++){
+                    while (allUseCabinetNumber.size()>0){
                         allUseCabinetNumber.get(0).setIsUser("可用");
                     }
                 }

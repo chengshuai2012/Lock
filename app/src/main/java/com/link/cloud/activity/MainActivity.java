@@ -398,22 +398,32 @@ public class MainActivity extends Activity {
     }
 
     int openType = 1;
-
+    long startTime;
     @OnClick({R.id.main_bt_01, R.id.main_bt_02, R.id.main_bt_03, R.id.head_text_02,R.id.back_top})
     public void OnClick(View view) {
         switch (view.getId()) {
             case R.id.main_bt_01:
-                mainButton.setVisibility(View.INVISIBLE);
-                workIdentify.setVisibility(View.VISIBLE);
-                layoutThree.setVisibility(View.VISIBLE);
-                openLockLayout.setVisibility(View.INVISIBLE);
-                textError.setText(getString(R.string.register_template_tip));
-                isWorkFinsh = false;
-                isIdentyFinsh = true;
-                time = 40;
-                workHandler.sendEmptyMessage(18);
+                if( System.currentTimeMillis()-startTime>1000){
+                    modelImgMng.reset();
+                    modOkProgress=0;
+                    startTime = System.currentTimeMillis();
+                    mainButton.setVisibility(View.INVISIBLE);
+                    workIdentify.setVisibility(View.VISIBLE);
+                    layoutThree.setVisibility(View.VISIBLE);
+                    openLockLayout.setVisibility(View.INVISIBLE);
+                    textError.setText(getString(R.string.register_template_tip));
+                    isWorkFinsh = false;
+                    isIdentyFinsh = true;
+
+                    time = 40;
+                    workHandler.sendEmptyMessage(18);
+                }
+
+
                 break;
             case R.id.main_bt_02:
+                if( System.currentTimeMillis()-startTime>1000){
+                    startTime = System.currentTimeMillis();
                 mainButton.setVisibility(View.INVISIBLE);
                 workIdentify.setVisibility(View.VISIBLE);
                 layoutThree.setVisibility(View.VISIBLE);
@@ -424,9 +434,11 @@ public class MainActivity extends Activity {
                 isIdentyFinsh = false;
                 isWorkFinsh = true;
                 isLive = false;
-                workHandler.sendEmptyMessage(19);
+                workHandler.sendEmptyMessage(19);}
                 break;
             case R.id.main_bt_03:
+                if( System.currentTimeMillis()-startTime>1000){
+                    startTime = System.currentTimeMillis();
                 mainButton.setVisibility(View.INVISIBLE);
                 workIdentify.setVisibility(View.VISIBLE);
                 layoutThree.setVisibility(View.VISIBLE);
@@ -437,7 +449,7 @@ public class MainActivity extends Activity {
                 isIdentyFinsh = false;
                 isWorkFinsh = true;
                 isLive = true;
-                workHandler.sendEmptyMessage(19);
+                workHandler.sendEmptyMessage(19);}
                 break;
             case R.id.back_top:
                 mainButton.setVisibility(View.VISIBLE);
