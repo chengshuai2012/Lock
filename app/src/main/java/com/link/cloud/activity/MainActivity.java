@@ -10,12 +10,15 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -24,6 +27,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -62,6 +66,8 @@ public class MainActivity extends Activity {
     private final static float IDENTIFY_SCORE_THRESHOLD = 0.63f;//认证通过的得分阈值，超过此得分才认为认证通过；
     private final static float MODEL_SCORE_THRESHOLD = 0.4f;//同一手指第2，3次建模模版与前1，2次的匹配得分阈值，低于此值认为换用了其他手指；
     public static MdDevice mdDevice;
+    @BindView(R.id.edit_code)
+    EditText editCode;
     @BindView(R.id.head_text_01)
     TextView headText01;
     @BindView(R.id.head_text_02)
@@ -80,54 +86,16 @@ public class MainActivity extends Activity {
     LinearLayout mainBt02;
     @BindView(R.id.main_bt_03)
     LinearLayout mainBt03;
-    @BindView(R.id.layout_one)
-    LinearLayout layoutOne;
-    @BindView(R.id.edit_01)
-    EditText edit01;
-    @BindView(R.id.clean_other)
-    Button cleanOther;
-    @BindView(R.id.clean_all)
-    Button cleanAll;
-    @BindView(R.id.back)
-    Button back;
-    @BindView(R.id.openlock_one)
-    EditText openlockOne;
-    @BindView(R.id.openlock_button)
-    Button openlockButton;
-    @BindView(R.id.openlock_all)
-    Button openlockAll;
-    @BindView(R.id.cabinet_used)
-    EditText cabinetUsed;
-    @BindView(R.id.record_button)
-    Button recordButton;
-    @BindView(R.id.lock_message)
-    Button lockMessage;
-    @BindView(R.id.back_home)
-    Button backHome;
-    @BindView(R.id.edit_02)
-    EditText edit02;
-    @BindView(R.id.edit_03)
-    EditText edit03;
-    @BindView(R.id.openlock_other)
-    Button openlockOther;
-    @BindView(R.id.chang_pdw)
-    Button changPdw;
-    @BindView(R.id.button4)
-    Button button4;
-    @BindView(R.id.textView2)
-    TextView textView2;
-    @BindView(R.id.adminmessage)
-    LinearLayout adminmessage;
-    @BindView(R.id.versionName)
-    TextView versionName;
+    @BindView(R.id.main_button)
+    LinearLayout mainButton;
+    @BindView(R.id.back_top)
+    TextView backTop;
     @BindView(R.id.time_forfinger)
     TextView timeForfinger;
     @BindView(R.id.imageView)
     ImageView imageView;
     @BindView(R.id.text_error)
     TextView textError;
-    @BindView(R.id.qrcode)
-    EditText qrcode;
     @BindView(R.id.layout_error_text)
     LinearLayout layoutErrorText;
     @BindView(R.id.layout_three)
@@ -141,9 +109,12 @@ public class MainActivity extends Activity {
     @BindView(R.id.open_lock_layout)
     LinearLayout openLockLayout;
     @BindView(R.id.work_identify)
-    LinearLayout workIdentify;
-    @BindView(R.id.main_button)
-    LinearLayout mainButton;
+    RelativeLayout workIdentify;
+    @BindView(R.id.layout_one)
+    LinearLayout layoutOne;
+    @BindView(R.id.versionName)
+    TextView versionName;
+
 
     private List<MdDevice> mdDevicesList = new ArrayList<MdDevice>();
 
@@ -299,6 +270,7 @@ public class MainActivity extends Activity {
     private byte[] img;
     Realm realm;
     SharedPreferences userInfo;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -314,6 +286,15 @@ public class MainActivity extends Activity {
         getBox();
         getTotal();
         getUsed();
+        PackageInfo pi = null;
+        try {
+            pi = getPackageManager().getPackageInfo(getPackageName(), 0);
+            versionName.setText(pi.versionName);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
+
         headText02.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -322,10 +303,10 @@ public class MainActivity extends Activity {
                 return false;
             }
         });
-        userInfo=getSharedPreferences("user_info",0);
+        userInfo = getSharedPreferences("user_info", 0);
         String devicepwd = userInfo.getString("devicepwd", "");
-        if(TextUtils.isEmpty(devicepwd)){
-            userInfo.edit().putString("devicepwd","888888");
+        if (TextUtils.isEmpty(devicepwd)) {
+            userInfo.edit().putString("devicepwd", "888888").commit();
         }
         random = new Random();
         openDoorUtil = new OpenDoorUtil();
@@ -361,17 +342,19 @@ public class MainActivity extends Activity {
         intentFilter.addAction(BaseApplication.ACTION_UPDATEUI);
         registerReceiver(mesReceiver, intentFilter);
     }
+    int userType=1;
+
 
     private void getUsed() {
         isUser = realm.where(CabinetNumber.class).equalTo("isUser", "使用中").findAll();
         isUser.addChangeListener(new RealmChangeListener<RealmResults<CabinetNumber>>() {
             @Override
             public void onChange(RealmResults<CabinetNumber> cabinetNumbers) {
-                textNum2.setText(cabinetNumbers.size()+"");
-                Log.e("onChange: ","userchanged" );
+                textNum2.setText("已用:"+cabinetNumbers.size() + "");
+                Log.e("onChange: ", "userchanged");
             }
         });
-        textNum2.setText(isUser.size()+"");
+        textNum2.setText("已用:"+isUser.size() );
     }
 
     private void getTotal() {
@@ -379,38 +362,44 @@ public class MainActivity extends Activity {
         allCabinetNumber.addChangeListener(new RealmChangeListener<RealmResults<CabinetNumber>>() {
             @Override
             public void onChange(RealmResults<CabinetNumber> cabinetNumbers) {
-                textNum1.setText(cabinetNumbers.size()+"");
+                textNum1.setText("全部:"+cabinetNumbers.size() + "");
             }
         });
-        textNum1.setText(allCabinetNumber.size()+"");
+        textNum1.setText("全部:"+allCabinetNumber.size() );
     }
+
     MesReceiver mesReceiver;
     String opentime;
+
     public class MesReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             headText03Main.setText(intent.getStringExtra("timeStr"));
-            opentime=intent.getStringExtra("timeStr");
+            opentime = intent.getStringExtra("timeStr");
             headText01.setText(intent.getStringExtra("timeData"));
         }
     }
-    List<CabinetNumber> boxs =new ArrayList<>();
+
+    List<CabinetNumber> boxs = new ArrayList<>();
+
     private void getBox() {
-        allBox = realm.where(CabinetNumber.class).equalTo("isUser","可用").findAll();
+        allBox = realm.where(CabinetNumber.class).equalTo("isUser", "可用").findAll();
         this.allBox.addChangeListener(new RealmChangeListener<RealmResults<CabinetNumber>>() {
             @Override
             public void onChange(RealmResults<CabinetNumber> cabinetNumbers) {
                 boxs.clear();
                 boxs.addAll(cabinetNumbers);
-                textNum3.setText(cabinetNumbers.size()+"");
+                textNum3.setText("剩余:"+cabinetNumbers.size() );
             }
         });
         boxs.clear();
         boxs.addAll(realm.copyFromRealm(allBox));
-        textNum3.setText(allBox.size()+"");
+        textNum3.setText("剩余:"+allBox.size() + "");
     }
+
     int openType = 1;
-    @OnClick({R.id.main_bt_01, R.id.main_bt_02, R.id.main_bt_03,R.id.head_text_02})
+
+    @OnClick({R.id.main_bt_01, R.id.main_bt_02, R.id.main_bt_03, R.id.head_text_02,R.id.back_top})
     public void OnClick(View view) {
         switch (view.getId()) {
             case R.id.main_bt_01:
@@ -430,7 +419,7 @@ public class MainActivity extends Activity {
                 layoutThree.setVisibility(View.VISIBLE);
                 openLockLayout.setVisibility(View.INVISIBLE);
                 textError.setText(getString(R.string.register_template_tip));
-                openType=1;
+                openType = 1;
                 time = 40;
                 isIdentyFinsh = false;
                 isWorkFinsh = true;
@@ -444,11 +433,20 @@ public class MainActivity extends Activity {
                 openLockLayout.setVisibility(View.INVISIBLE);
                 textError.setText(getString(R.string.register_template_tip));
                 time = 40;
-                openType=2;
+                openType = 2;
                 isIdentyFinsh = false;
                 isWorkFinsh = true;
                 isLive = true;
                 workHandler.sendEmptyMessage(19);
+                break;
+            case R.id.back_top:
+                mainButton.setVisibility(View.VISIBLE);
+                workIdentify.setVisibility(View.INVISIBLE);
+                layoutThree.setVisibility(View.INVISIBLE);
+                openLockLayout.setVisibility(View.VISIBLE);
+                isIdentyFinsh=true;
+                isWorkFinsh=true;
+                workHandler.removeMessages(20);
                 break;
 
         }
@@ -460,31 +458,36 @@ public class MainActivity extends Activity {
         private Button btCancel;
         private Button btConfirm;
         private TextView texttilt;
+
         public ExitAlertDialog(Context context, int theme) {
             super(context, theme);
             mContext = context;
             initDialog();
         }
+
         public ExitAlertDialog(Context context) {
             super(context, R.style.customer_dialog);
             mContext = context;
             initDialog();
         }
+
         private void initDialog() {
             View view = LayoutInflater.from(mContext).inflate(R.layout.dialog_exit_confirm, null);
             setContentView(view);
             btCancel = (Button) view.findViewById(R.id.btCancel);
             btConfirm = (Button) view.findViewById(R.id.btConfirm);
             etPwd = (EditText) view.findViewById(R.id.deviceCode);
-            texttilt=(TextView)view.findViewById(R.id.text_title);
+            texttilt = (TextView) view.findViewById(R.id.text_title);
             btCancel.setOnClickListener(this);
             btConfirm.setOnClickListener(this);
         }
+
         @Override
         public void show() {
             etPwd.setText("");
             super.show();
         }
+
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
@@ -492,29 +495,48 @@ public class MainActivity extends Activity {
                     this.dismiss();
                     break;
                 case R.id.btConfirm:
-                        String pwd = etPwd.getText().toString().trim();
-                        if (TextUtils.isEmpty(pwd)) {
-                            ToastUtils.show(mContext, "请输入密码", ToastUtils.LENGTH_SHORT);
-                            return;
-                        }
-
-
-                        String repwd = userInfo.getString("devicepwd","0");
-
-                        if (!pwd.equals(repwd)) {
-                            ToastUtils.show(mContext, "密码不正确", ToastUtils.LENGTH_SHORT);
-                            this.dismiss();
-                            return;
-                        }else {
-                            Intent intent = new Intent(MainActivity.this,SettingActivity.class);
-                            startActivity(intent);
-                            this.dismiss();
-                        }
-                    break;
+                    String pwd = etPwd.getText().toString().trim();
+                    if (TextUtils.isEmpty(pwd)) {
+                        ToastUtils.show(mContext, "请输入密码", ToastUtils.LENGTH_SHORT);
+                        return;
                     }
 
+
+                    String repwd = userInfo.getString("devicepwd", "0");
+
+                    if (!pwd.equals(repwd)) {
+                        ToastUtils.show(mContext, "密码不正确", ToastUtils.LENGTH_SHORT);
+                        this.dismiss();
+                        return;
+                    } else {
+                        Intent intent = new Intent(MainActivity.this, SettingActivity.class);
+                        startActivityForResult(intent,188);
+                        this.dismiss();
+                    }
+                    break;
+            }
+
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==188&&resultCode==RESULT_OK){
+            userType = data.getIntExtra("userType",1);
+            if(userType==2){
+                mainButton.setVisibility(View.INVISIBLE);
+                workIdentify.setVisibility(View.VISIBLE);
+                layoutThree.setVisibility(View.VISIBLE);
+                openLockLayout.setVisibility(View.INVISIBLE);
+                textError.setText(getString(R.string.register_template_tip));
+                isWorkFinsh = false;
+                isIdentyFinsh = true;
+                time = 40;
+                workHandler.sendEmptyMessage(18);
             }
         }
+    }
 
     boolean isLive = false;
 
@@ -524,6 +546,9 @@ public class MainActivity extends Activity {
         unbindService(mdSrvConn);
         realm.close();
         bind.unbind();
+        workHandler.removeCallbacksAndMessages(null);
+        isIdentyFinsh=true;
+        isWorkFinsh=true;
         unregisterReceiver(mesReceiver);
     }
 
@@ -549,15 +574,19 @@ public class MainActivity extends Activity {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             switch (msg.what) {
+
                 case 18:
+                    if(textError==null){
+                        return;
+                    }
                     time--;
                     if (time == 0) {
-                        isWorkFinsh=true;
+                        isWorkFinsh = true;
                         mainButton.setVisibility(View.VISIBLE);
                         workIdentify.setVisibility(View.GONE);
                     }
                     textError.setText(getString(R.string.register_template_tip));
-                    timeForfinger.setText(time+"");
+                    timeForfinger.setText(time + "");
                     handler.removeMessages(19);
                     int state = getState();
                     Log.e(TAG, state + "");
@@ -570,22 +599,33 @@ public class MainActivity extends Activity {
 
                     break;
                 case 19:
+                    if(textError==null){
+                        return;
+                    }
                     time--;
                     if (time == 0) {
-                        isIdentyFinsh=true;
+                        isIdentyFinsh = true;
                         mainButton.setVisibility(View.VISIBLE);
                         workIdentify.setVisibility(View.GONE);
                     }
+                    textError.setText(getString(R.string.register_template_tip));
                     workHandler.removeMessages(19);
                     int state2 = getState();
                     if (state2 == 3) {
                         identifyModel();
                     }
-                    timeForfinger.setText(time+"");
+                    timeForfinger.setText(time + "");
                     if (!isIdentyFinsh) {
                         workHandler.sendEmptyMessageDelayed(19, 1000);
                     }
 
+                    break;
+                case 20:
+                    if(mainButton==null){
+                        return;
+                    }
+                    mainButton.setVisibility(View.VISIBLE);
+                    workIdentify.setVisibility(View.GONE);
                     break;
             }
 
@@ -724,7 +764,7 @@ public class MainActivity extends Activity {
                         //}
                         //----------------------------------------------------------
 
-                        if(boxs.size()>0){
+                        if (boxs.size() > 0&&userType==1) {
                             final Person person = new Person();
                             textError.setText(getString(R.string.check_successful));
                             layoutThree.setVisibility(View.INVISIBLE);
@@ -733,6 +773,7 @@ public class MainActivity extends Activity {
                             String cabinetNumber = boxs.get(i).getCabinetNumber();
                             person.setUid(cabinetNumber);
                             person.setFeature(HexUtil.bytesToHexString(feature));
+                            person.setFingerId(userType);
                             realm.executeTransaction(new Realm.Transaction() {
                                 @Override
                                 public void execute(Realm realm) {
@@ -740,8 +781,22 @@ public class MainActivity extends Activity {
                                 }
                             });
                             openLock(cabinetNumber);
+                        } else if(userType==2){
+                            final Person person = new Person();
+                            person.setUid("管理员");
+                            person.setFeature(HexUtil.bytesToHexString(feature));
+                            person.setFingerId(2);
+                            realm.executeTransaction(new Realm.Transaction() {
+                                @Override
+                                public void execute(Realm realm) {
+                                    realm.copyToRealm(person);
+                                }
+                            });
+                            userType=1;
+                            textError.setText("绑定成功");
+                            fingersign();
                         }else {
-                            Toast.makeText(MainActivity.this,"没有可用的柜号",Toast.LENGTH_LONG).show();
+                            Toast.makeText(MainActivity.this, "没有可用的柜号", Toast.LENGTH_LONG).show();
                         }
 
                         isWorkFinsh = true;
@@ -772,14 +827,16 @@ public class MainActivity extends Activity {
         }
 
     }
+
     OpenDoorUtil openDoorUtil;
     public SerialPort serialpprt_wk1 = null;
     public SerialPort serialpprt_wk2 = null;
     public SerialPort serialpprt_wk3 = null;
+
     private void openLock(String cabinetNumber) {
         final CabinetNumber openCabinet = realm.where(CabinetNumber.class).equalTo("cabinetNumber", cabinetNumber).findFirst();
         boolean b = openLock(cabinetNumber, openCabinet);
-        if(b){
+        if (b) {
             realm.executeTransaction(new Realm.Transaction() {
                 @Override
                 public void execute(Realm realm) {
@@ -801,9 +858,20 @@ public class MainActivity extends Activity {
 
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode==KeyEvent.KEYCODE_BACK){
+            isIdentyFinsh=true;
+            isWorkFinsh=true;
+            workHandler.removeCallbacksAndMessages(null);
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
     private boolean openLock(String cabinetNumber, CabinetNumber openCabinet) {
-        boolean isOpenSuccess=false;
-        int nuberlock = Integer.parseInt(cabinetNumber);
+        boolean isOpenSuccess = false;
+        String circuitNumber = openCabinet.getCircuitNumber();
+        int nuberlock = Integer.parseInt(circuitNumber);
         if (nuberlock > 10) {
             nuberlock = nuberlock % 10;
             if (nuberlock == 0) {
@@ -823,7 +891,7 @@ public class MainActivity extends Activity {
                 serialpprt_wk3.getOutputStream().write(openDoorUtil.openOneDoor(10, nuberlock));
             }
             textNumber.setText(cabinetNumber);
-            isOpenSuccess=true;
+            isOpenSuccess = true;
         } catch (Exception e) {
             textEnd.setText("开柜失败,请重新开柜");
         } finally {
@@ -853,78 +921,75 @@ public class MainActivity extends Activity {
         Log.e(TAG, "identifyResult: " + identifyResult);
 
         if (identifyResult) {//比对通过且得分达标时打印此手指绑定的用户名
+            int fingerId = peoples.get(pos[0]).getFingerId();
+            if(fingerId==1){
             uid = uidss[pos[0]];
             Log.e(TAG, "identifyResult: " + uid);
             final CabinetNumber cabinetNumber = realm.where(CabinetNumber.class).equalTo("cabinetNumber", uid).findFirst();
             boolean b = openLock(uid, cabinetNumber);
-            if (b){
-                if(openType==1){
-                    final CabinetRecord cabinetRecord = new CabinetRecord();
-                    cabinetRecord.setCabinetNumber(uid);
-                    cabinetRecord.setCabinetStating("续存");
-                    cabinetRecord.setMemberName("会员");
-                    cabinetRecord.setOpentime(opentime);
-                    realm.executeTransaction(new Realm.Transaction() {
-                        @Override
-                        public void execute(Realm realm) {
-                            realm.copyToRealm(cabinetRecord);
-                        }
-                    });
-                }else if(openType==2){
-                    final CabinetRecord cabinetRecord = new CabinetRecord();
-                    cabinetRecord.setCabinetNumber(uid);
-                    cabinetRecord.setCabinetStating("离场");
-                    cabinetRecord.setMemberName("会员");
-                    cabinetRecord.setOpentime(opentime);
-                    realm.executeTransaction(new Realm.Transaction() {
-                        @Override
-                        public void execute(Realm realm) {
-                            realm.copyToRealm(cabinetRecord);
-                        }
-                    });
-                    realm.executeTransaction(new Realm.Transaction() {
-                        @Override
-                        public void execute(Realm realm) {
-                            cabinetNumber.setIsUser("可用");
-                        }
-                    });
-                    final Person uid = realm.where(Person.class).equalTo("uid", this.uid).findFirst();
-                    realm.executeTransaction(new Realm.Transaction() {
-                        @Override
-                        public void execute(Realm realm) {
-                            uid.deleteFromRealm();
-                        }
-                    });
+            textError.setText(getString(R.string.check_successful));
+            if (b) {
+                    if (openType == 1) {
+                        final CabinetRecord cabinetRecord = new CabinetRecord();
+                        cabinetRecord.setCabinetNumber(uid);
+                        cabinetRecord.setCabinetStating("续存");
+                        cabinetRecord.setMemberName("会员");
+                        cabinetRecord.setOpentime(opentime);
+                        realm.executeTransaction(new Realm.Transaction() {
+                            @Override
+                            public void execute(Realm realm) {
+                                realm.copyToRealm(cabinetRecord);
+                            }
+                        });
+                    } else if (openType == 2) {
+                        final CabinetRecord cabinetRecord = new CabinetRecord();
+                        cabinetRecord.setCabinetNumber(uid);
+                        cabinetRecord.setCabinetStating("离场");
+                        cabinetRecord.setMemberName("会员");
+                        cabinetRecord.setOpentime(opentime);
+                        realm.executeTransaction(new Realm.Transaction() {
+                            @Override
+                            public void execute(Realm realm) {
+                                realm.copyToRealm(cabinetRecord);
+                            }
+                        });
+                        realm.executeTransaction(new Realm.Transaction() {
+                            @Override
+                            public void execute(Realm realm) {
+                                cabinetNumber.setIsUser("可用");
+                            }
+                        });
+                        final Person uid = realm.where(Person.class).equalTo("uid", this.uid).findFirst();
+                        realm.executeTransaction(new Realm.Transaction() {
+                            @Override
+                            public void execute(Realm realm) {
+                                uid.deleteFromRealm();
+                            }
+                        });
+                    }
                 }
+                isIdentyFinsh = true;
+            }else {
+                isIdentyFinsh = true;
+                identifyResult=false;
+                fingersign();
+                startActivity(new Intent(this,SettingActivity.class));
             }
-            isIdentyFinsh = true;
+
             return identifyResult;
         } else {
+            textError.setText(getString(R.string.check_failed));
             return identifyResult;
 
         }
 
 
     }
-    private void fingersign(){
 
-        if (workHandler!=null) {
-
-
-            workHandler.postDelayed(new Runnable() {
-
-                @Override
-
-                public void run() {
-                    mainButton.setVisibility(View.VISIBLE);
-                    workIdentify.setVisibility(View.GONE);
-                }
-
-            }, 3000);
-
-        }
-
+    private void fingersign() {
+        workHandler.sendEmptyMessageDelayed(20,3000);
     }
+
     public void getPerson() {
         all = realm.where(Person.class).findAll();
         all.addChangeListener(new RealmChangeListener<RealmResults<Person>>() {

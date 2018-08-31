@@ -1,542 +1,339 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/index_bg">
-    <include layout="@layout/lock_head_main"/>
+    android:background="@drawable/index_bg"
+    android:orientation="vertical">
+
+    <include
+        layout="@layout/layout_img"
+        android:visibility="visible" />
+
+    <include layout="@layout/lock_head_main" />
+
     <LinearLayout
-        android:background="@drawable/main_bg"
         android:id="@+id/layout_one"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="150px"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/main_bg"
         android:orientation="vertical"
         android:visibility="visible">
+
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
+
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:id="@+id/main_button"
-                >
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="120px"
-            android:layout_marginLeft="150px"
-            android:layout_marginRight="150px"
-            android:layout_marginTop="50px"
-            android:background="@drawable/button_bt_bg"
-            android:orientation="horizontal"
-            android:visibility="visible">
-
-            <TextView
-                android:id="@+id/text_num1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text=""
-                android:textColor="@color/white"
-                android:textSize="40sp" />
-
-            <View
-                android:layout_width="5dp"
-                android:layout_height="150px"
-                android:layout_gravity="center"
-                android:background="#fff" />
-
-            <TextView
-                android:id="@+id/text_num2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text=""
-                android:textColor="@color/white"
-                android:textSize="40sp" />
-
-            <View
-                android:layout_width="5dp"
-                android:layout_height="150px"
-                android:layout_gravity="center"
-                android:background="@color/white" />
-
-            <TextView
-                android:id="@+id/text_num3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text=""
-                android:textColor="@color/white"
-                android:textSize="40sp" />
-        </LinearLayout>
-
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="100px"
-            android:orientation="horizontal">
-
-            <LinearLayout
-                android:id="@+id/main_bt_01"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="100px"
-                android:orientation="vertical"
-                android:layout_weight="1"
-                android:background="@drawable/main_page_1" >
-                <TextView
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="30dp"
-                    android:layout_marginLeft="30dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/white"
-                    android:textSize="50dp"
-                    android:text="01"
-                    android:textStyle="bold"
-                    />
-
-                <TextView
-                    android:layout_gravity="center_horizontal"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="150dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/white"
-                    android:textSize="40dp"
-                    android:text="@string/put_in"
-                    />
-            </LinearLayout>
-            <LinearLayout
-                android:id="@+id/main_bt_02"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="100px"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:background="@drawable/main_page_2" >
-                <TextView
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="30dp"
-                    android:layout_marginLeft="30dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/white"
-                    android:textSize="50dp"
-                    android:text="02"
-                    android:textStyle="bold"
-                    />
-                <TextView
-                    android:layout_gravity="center_horizontal"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="150dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/white"
-                    android:textSize="40dp"
-                    android:text="@string/temp"
-                    />
-            </LinearLayout>
-            <LinearLayout
-                android:id="@+id/main_bt_03"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="100px"
-                android:layout_marginRight="100px"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:background="@drawable/main_page_3" >
-                <TextView
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="30dp"
-                    android:layout_marginLeft="30dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/white"
-                    android:textSize="50dp"
-                    android:text="03"
-                    android:textStyle="bold"
-                    />
-                <TextView
-                    android:layout_gravity="center_horizontal"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="150dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/white"
-                    android:textSize="40dp"
-                    android:text="@string/leave"
-                    />
-            </LinearLayout>
-        </LinearLayout>
-
-        </LinearLayout>
-            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:visibility="gone"
-                android:id="@+id/work_identify"
-                >
+                android:orientation="vertical">
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="120px"
+                    android:layout_marginLeft="150px"
+                    android:layout_marginRight="150px"
+                    android:layout_marginTop="50px"
+                    android:background="@drawable/button_bt_bg"
+                    android:orientation="horizontal"
+                    android:visibility="visible">
+
+                    <TextView
+                        android:id="@+id/text_num1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text=""
+                        android:textColor="@color/white"
+                        android:textSize="40sp" />
+
+                    <View
+                        android:layout_width="5dp"
+                        android:layout_height="150px"
+                        android:layout_gravity="center"
+                        android:background="#fff" />
+
+                    <TextView
+                        android:id="@+id/text_num2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text=""
+                        android:textColor="@color/white"
+                        android:textSize="40sp" />
+
+                    <View
+                        android:layout_width="5dp"
+                        android:layout_height="150px"
+                        android:layout_gravity="center"
+                        android:background="@color/white" />
+
+                    <TextView
+                        android:id="@+id/text_num3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text=""
+                        android:textColor="@color/white"
+                        android:textSize="40sp" />
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="100px"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:id="@+id/main_bt_01"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="100px"
+                        android:layout_weight="1"
+                        android:background="@drawable/main_page_1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:layout_marginLeft="30dp"
+                            android:layout_marginTop="30dp"
+                            android:text="01"
+                            android:textColor="@color/white"
+                            android:textSize="50dp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginTop="150dp"
+                            android:text="@string/put_in"
+                            android:textColor="@color/white"
+                            android:textSize="40dp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/main_bt_02"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="100px"
+                        android:layout_weight="1"
+                        android:background="@drawable/main_page_2"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:layout_marginLeft="30dp"
+                            android:layout_marginTop="30dp"
+                            android:text="02"
+                            android:textColor="@color/white"
+                            android:textSize="50dp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginTop="150dp"
+                            android:text="@string/temp"
+                            android:textColor="@color/white"
+                            android:textSize="40dp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/main_bt_03"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="100px"
+                        android:layout_marginRight="100px"
+                        android:layout_weight="1"
+                        android:background="@drawable/main_page_3"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:layout_marginLeft="30dp"
+                            android:layout_marginTop="30dp"
+                            android:text="03"
+                            android:textColor="@color/white"
+                            android:textSize="50dp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginTop="150dp"
+                            android:text="@string/leave"
+                            android:textColor="@color/white"
+                            android:textSize="40dp" />
+                    </LinearLayout>
+
+                </LinearLayout>
                 <RelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    >
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="15dp"
+                    android:layout_marginLeft="30dp">
+                    <TextView
+                        android:id="@+id/versionName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentLeft="true"
+                        android:layout_marginLeft="10dp"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/text_size_30sp" />
+
+                </RelativeLayout>
+            </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/work_identify"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/back_top"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="30dp"
+                        android:text="返回"
+                        android:textColor="@color/colorbutton"
+                        android:textSize="45sp"
+                        android:textStyle="bold" />
+
                     <TextView
                         android:id="@+id/time_forfinger"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_toRightOf="@id/back_top"
                         android:text="30"
                         android:textColor="@color/colorbutton"
-                        android:textStyle="bold"
-                        android:layout_marginLeft="30dp"
-                        android:layout_alignParentLeft="true"
-                        android:textSize="45sp"/>
+                        android:textSize="45sp"
+                        android:textStyle="bold" />
                 </RelativeLayout>
+
                 <LinearLayout
                     android:id="@+id/layout_three"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:visibility="visible"
-                    android:orientation="vertical">
+                    android:layout_centerInParent="true"
+                    android:orientation="vertical"
+                    android:visibility="visible">
+
                     <LinearLayout
                         android:layout_width="700px"
                         android:layout_height="300px"
-                        android:visibility="visible"
                         android:layout_gravity="center"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:visibility="visible">
+
                         <ImageView
+                            android:id="@+id/imageView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/putfinger"
-                            android:id="@+id/imageView" />
+                            android:src="@drawable/putfinger" />
                     </LinearLayout>
+
                     <LinearLayout
                         android:id="@+id/layout_error_text"
                         android:layout_width="600px"
                         android:layout_height="180px"
                         android:layout_gravity="center"
-                        android:gravity="center"
-                        android:visibility="visible"
                         android:background="@drawable/main_botton"
-                        android:orientation="vertical">
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:visibility="visible">
+
                         <TextView
                             android:id="@+id/text_error"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/put_finger_right"
                             android:gravity="center"
-                            android:textStyle="bold"
+                            android:text="@string/put_finger_right"
                             android:textColor="@color/white"
                             android:textSize="30px"
-                            />
-                        <EditText
-                            android:id="@+id/qrcode"
-                            android:layout_width="1dp"
-                            android:layout_height="1dp" />
+                            android:textStyle="bold" />
+
                     </LinearLayout>
                 </LinearLayout>
+
                 <LinearLayout
                     android:id="@+id/open_lock_layout"
-                    android:layout_marginTop="100px"
                     android:layout_width="700px"
                     android:layout_height="500px"
-                    android:layout_gravity="center"
+                    android:layout_centerInParent="true"
+                    android:layout_marginTop="100px"
                     android:background="@drawable/button_bt_bg"
                     android:orientation="vertical"
                     android:visibility="gone">
+
                     <TextView
                         android:id="@+id/text_start"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="35sp"
                         android:layout_gravity="center_horizontal"
                         android:gravity="center"
-                        android:textStyle="bold"
+                        android:text="@string/cabinet_number"
                         android:textColor="@color/white"
-                        android:text="@string/cabinet_number"/>
+                        android:textSize="35sp"
+                        android:textStyle="bold" />
+
                     <TextView
                         android:id="@+id/text_number"
                         android:layout_width="match_parent"
                         android:layout_height="0px"
-                        android:layout_weight="1"
-                        android:textStyle="bold"
-                        android:textColor="@color/colorbutton"
-                        android:text=""
-                        android:textSize="80sp"
                         android:layout_gravity="center"
-                        android:gravity="center"/>
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text=""
+                        android:textColor="@color/colorbutton"
+                        android:textSize="80sp"
+                        android:textStyle="bold" />
+
                     <TextView
                         android:id="@+id/text_end"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="35sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/white"
                         android:layout_gravity="center"
                         android:lines="2"
                         android:maxWidth="300sp"
-                        android:text="@string/cabinet_put_out"/>
+                        android:text="@string/cabinet_put_out"
+                        android:textColor="@color/white"
+                        android:textSize="35sp"
+                        android:textStyle="bold" />
                 </LinearLayout>
-            </LinearLayout>
             </RelativeLayout>
+
+
+
+        </RelativeLayout>
     </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/adminmessage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="vertical"
-        android:visibility="gone">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="50px"
-            android:gravity="center_horizontal"
-            android:orientation="horizontal"
-            android:splitMotionEvents="false">
-
-            <EditText
-                android:id="@+id/edit_01"
-                android:layout_width="100px"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:digits="0123456789"
-                android:textColor="@color/black"
-                android:textSize="30sp" />
-
-            <Button
-                android:id="@+id/clean_other"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:text="@string/clear_cabinet"
-                android:textSize="@dimen/text_size_30sp" />
-
-            <Button
-                android:id="@+id/clean_all"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="30dp"
-                android:text="@string/clear_all"
-                android:textColor="@color/red"
-                android:textSize="@dimen/text_size_30sp" />
-
-            <Button
-                android:id="@+id/back"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="30dp"
-                android:text="@string/back"
-                android:textSize="30sp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="50px"
-            android:splitMotionEvents="false">
-
-            <EditText
-                android:id="@+id/openlock_one"
-                android:layout_width="100px"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:digits="0123456789"
-                android:textColor="@color/black"
-                android:textSize="30sp" />
-
-            <Button
-                android:id="@+id/openlock_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:text="@string/open_cabinet"
-                android:textSize="@dimen/text_size_30sp" />
-
-            <Button
-                android:id="@+id/openlock_all"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="50dp"
-                android:text="@string/open_all"
-                android:textColor="@color/colorbtn"
-                android:textSize="@dimen/text_size_30sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="20dp"
-            android:splitMotionEvents="false">
-
-            <EditText
-                android:id="@+id/cabinet_used"
-                android:layout_width="100px"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:digits="0123456789"
-                android:textColor="@color/black"
-                android:textSize="30sp" />
-
-            <Button
-                android:id="@+id/record_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:text="@string/user_record"
-                android:textSize="@dimen/text_size_30sp" />
-
-            <Button
-                android:id="@+id/lock_message"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="30dp"
-                android:text="@string/locker_plate"
-                android:textSize="@dimen/text_size_30sp" />
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="3dp"
-            android:textColor="@color/white"></View>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:text="@string/test"
-                android:textColor="@color/white"
-                android:textSize="@dimen/text_size_40sp" />
-            <Button
-                android:id="@+id/back_home"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_marginLeft="20dp"
-                android:text="@string/back_home"
-                android:textSize="@dimen/text_size_30sp" />
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="50px"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/plate_number"
-                android:textColor="@color/white"
-                android:textSize="@dimen/text_size_25sp" />
-
-            <EditText
-                android:id="@+id/edit_02"
-                android:layout_width="100px"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:background="@color/white"
-                android:digits="0123456789"
-                android:textColor="@color/black"
-                android:textCursorDrawable="@null"
-                android:textSize="30sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:text="@string/lock_number"
-                android:textColor="@color/white"
-                android:textSize="@dimen/text_size_25sp" />
-
-            <EditText
-                android:id="@+id/edit_03"
-                android:layout_width="100px"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:digits="0123456789"
-                android:textColor="@color/black"
-                android:textCursorDrawable="@null"
-                android:textSize="30sp" />
-
-            <Button
-                android:id="@+id/openlock_other"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:text="@string/open_lock"
-                android:textSize="@dimen/text_size_30sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30px"
-            android:splitMotionEvents="false">
-
-            <Button
-                android:id="@+id/chang_pdw"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="30dp"
-                android:layout_marginTop="10dp"
-                android:text="@string/chang_pwd"
-                android:textSize="30sp" />
-
-            <Button
-                android:id="@+id/button4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="30dp"
-                android:layout_marginTop="10dp"
-                android:text="@string/deviceId"
-                android:textSize="30sp" />
-
-            <TextView
-                android:id="@+id/textView2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:textSize="@dimen/text_size_30sp" />
-        </LinearLayout>
-
-    </LinearLayout>
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-        <TextView
-            android:id="@+id/versionName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="10dp"
-            android:text=""
-            android:textColor="@color/white"
-            android:textSize="@dimen/text_size_30sp" />
-    </RelativeLayout>
 
 
 </LinearLayout>

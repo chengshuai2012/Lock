@@ -145,13 +145,18 @@ public class SettingActivity extends Activity {
     String num;
     MesReceiver mesReceiver;
     @OnClick({R.id.cabinet_add,R.id.cabinet_delect,R.id.cabinet_repair,R.id.cabinet_isuse,R.id.open_all,R.id.open_lockPlate,R.id.open_cabinetnum, R.id.clean_cabinetnum,
-            R.id.check_record,R.id.chang_pdw,R.id.check_all,R.id.back,R.id.clean_all,R.id.open_app})
+            R.id.check_record,R.id.chang_pdw,R.id.check_all,R.id.back,R.id.clean_all,R.id.open_app,R.id.add_manager})
     public void OnClick(View view){
         num=etCabinetnum.getText().toString().trim();
         input = et_input.getText().toString().trim();
         switch (view.getId()){
+            case R.id.add_manager:
+                Intent intent = new Intent();
+                intent.putExtra("userType",2);
+                setResult(RESULT_OK,intent);
+                finish();
+                break;
             case R.id.cabinet_add:
-                start_num.setText("1");
                 if (TextUtils.isEmpty(et_lockPlate.getText().toString().trim())) {
                     Toast.makeText(SettingActivity.this, "请输入锁板号", Toast.LENGTH_LONG).show();
                 } else if (!TextUtils.isEmpty(et_lockPlate.getText().toString().trim()) && TextUtils.isEmpty(et_cabinet_count.getText().toString().trim())) {
@@ -392,8 +397,8 @@ public class SettingActivity extends Activity {
                 dialog.show();
                 break;
             case R.id.open_app:
-                Intent intent = getPackageManager().getLaunchIntentForPackage(getApplication().getPackageName());
-                PendingIntent restartIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, PendingIntent.FLAG_ONE_SHOT);
+                Intent intent2 = getPackageManager().getLaunchIntentForPackage(getApplication().getPackageName());
+                PendingIntent restartIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent2, PendingIntent.FLAG_ONE_SHOT);
                 AlarmManager mgr = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
                 mgr.set(AlarmManager.RTC, System.currentTimeMillis() , restartIntent); // 1秒钟后重启应用
                 System.exit(0);
@@ -569,7 +574,7 @@ public class SettingActivity extends Activity {
                 @Override
                 public void execute(Realm realm) {
                     for (int i=0;i<allUseCabinetNumber.size();i++){
-                        allUseCabinetNumber.get(i).setIsUser("可用");
+                        allUseCabinetNumber.get(0).setIsUser("可用");
                     }
                 }
             });
