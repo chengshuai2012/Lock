@@ -603,7 +603,9 @@ public class MainActivity extends Activity {
                     int state = getState();
                     Log.e(TAG, state + "");
                     if (state == 3) {
-                        workModel();
+                        if(!workFirst()){
+                            workModel();
+                        }
                     }
                     if (!isWorkFinsh) {
                         workHandler.sendEmptyMessageDelayed(18, 1000);
@@ -705,7 +707,24 @@ public class MainActivity extends Activity {
         }
 
     }
+    public boolean workFirst() {
+        byte[] feature = MdUsbService.extractImgModel(img, null, null);
 
+        if (feature == null) {
+            Log.e(TAG, "extractImgModel get feature from img fail,retry soon");
+            handler.obtainMessage(MSG_SHOW_LOG, "提取指静脉特征信息失败，请重试").sendToTarget();
+        } else {
+            if (identifyNewImg(img, pos, score)) {//比对及判断得分放到identifyNewImg()内实现
+
+                textError.setText("请勿重复开柜");
+
+                return true;
+            } else {
+                return  false;
+            }
+        }
+return false;
+    }
     public void workModel() {
         float[] quaScore = {0f, 0f, 0f, 0f};
         int quaRtn = MdUsbService.qualityImgEx(img, quaScore);
