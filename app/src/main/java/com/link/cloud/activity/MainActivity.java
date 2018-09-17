@@ -287,6 +287,7 @@ public class MainActivity extends Activity {
         getTotal();
         getUsed();
         PackageInfo pi = null;
+
         try {
             pi = getPackageManager().getPackageInfo(getPackageName(), 0);
             versionName.setText(pi.versionName);
@@ -599,7 +600,7 @@ public class MainActivity extends Activity {
                     }
                     textError.setText(getString(R.string.register_template_tip));
                     timeForfinger.setText(time + "");
-                    handler.removeMessages(19);
+                    handler.removeMessages(18);
                     int state = getState();
                     Log.e(TAG, state + "");
                     if (state == 3) {
