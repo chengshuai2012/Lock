@@ -561,7 +561,7 @@ public class SettingActivity extends Activity {
     private void clean_all(){
         final RealmResults<CabinetNumber> allUseCabinetNumber = realm.where(CabinetNumber.class).equalTo("isUser", "使用中").findAll();
         if (allUseCabinetNumber.size()>0){
-            final RealmResults<Person> allPerson = realm.where(Person.class).findAll();
+            final RealmResults<Person> allPerson = realm.where(Person.class).equalTo("fingerId",1).findAll();
             if(allPerson.size()>0){
                 realm.executeTransaction(new Realm.Transaction() {
                     @Override
